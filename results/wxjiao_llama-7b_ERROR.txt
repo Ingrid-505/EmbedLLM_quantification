@@ -1,0 +1,92 @@
+Model: wxjiao/llama-7b
+Error: OutOfMemoryError: CUDA out of memory. Tried to allocate 716.00 MiB. GPU 0 has a total capacity of 94.97 GiB of which 302.56 MiB is free. Including non-PyTorch memory, this process has 94.66 GiB memory in use. Of the allocated memory 57.22 GiB is allocated by PyTorch, and 36.81 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+Traceback (most recent call last):
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/run_evals.py", line 484, in <module>
+    results = lm_eval.simple_evaluate(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/lm_eval/utils.py", line 458, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/lm_eval/evaluator.py", line 357, in simple_evaluate
+    results = evaluate(
+              ^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/lm_eval/utils.py", line 458, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/lm_eval/evaluator.py", line 585, in evaluate
+    resps = getattr(lm, reqtype)(cloned_reqs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/lm_eval/models/huggingface.py", line 1463, in generate_until
+    cont = self._model_generate(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/lm_eval/models/huggingface.py", line 996, in _model_generate
+    return self.model.generate(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/generation/utils.py", line 2564, in generate
+    result = decoding_method(
+             ^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/generation/utils.py", line 2787, in _sample
+    outputs = model_forward(**model_inputs, return_dict=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 918, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/models/llama/modeling_llama.py", line 459, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+                                       ^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 1072, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/models/llama/modeling_llama.py", line 395, in forward
+    hidden_states = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/modeling_layers.py", line 94, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/utils/deprecation.py", line 172, in wrapped_func
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/models/llama/modeling_llama.py", line 294, in forward
+    hidden_states, _ = self.self_attn(
+                       ^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/utils/deprecation.py", line 172, in wrapped_func
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/models/llama/modeling_llama.py", line 246, in forward
+    key_states, value_states = past_key_values.update(key_states, value_states, self.layer_idx, cache_kwargs)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/cache_utils.py", line 776, in update
+    keys, values = self.layers[layer_idx].update(key_states, value_states, cache_kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/jumbo/yaoqingyang/ivprasad/EmbedLLM/.venv/lib/python3.12/site-packages/transformers/cache_utils.py", line 120, in update
+    self.values = torch.cat([self.values, value_states], dim=-2)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 716.00 MiB. GPU 0 has a total capacity of 94.97 GiB of which 302.56 MiB is free. Including non-PyTorch memory, this process has 94.66 GiB memory in use. Of the allocated memory 57.22 GiB is allocated by PyTorch, and 36.81 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
