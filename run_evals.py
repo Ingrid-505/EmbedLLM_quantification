@@ -36,15 +36,11 @@ def patched_fields(class_or_instance):
     except TypeError: return []
 dataclasses.fields = patched_fields
 
-# ============================================
-# IMPORTS (Post-Patch)
-# ============================================
+
 import lm_eval
 from lm_eval.utils import make_table
 
-# ============================================
-# LOGGING SETUP
-# ============================================
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -53,20 +49,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ============================================
-# CONFIGURATION
+# CONFIGS 
 # ============================================
 CSV_PATH = r'/jumbo/yaoqingyang/ivprasad/EmbedLLM/data/model_order1.csv'
 OUTPUT_DIR = "./results"
 TASKS = ["mmlu", "truthfulqa_mc1", "piqa", "gsm8k", "gpqa"]
 
-# Use "auto" to let lm-eval find the max batch size for your VRAM
-BATCH_SIZE = 8 
+BATCH_SIZE = 8  # I was running out of memory, so change to auto if that's better
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# ============================================
-# HELPER FUNCTIONS
-# ============================================
+
 def clear_gpu_memory():
     """Aggressive VRAM cleanup."""
     gc.collect()
@@ -107,14 +100,13 @@ for i, row in models_df.iterrows():
     clear_gpu_memory()
     logger.info(f"\n[{i+1}/{len(models_df)}] EVALUATING: {model_name}")
     
-    # Model arguments configured for multi-GPU and memory efficiency
-    # load_in_4bit=True is recommended for 7B+ models on limited VRAM
+
     model_args = (
         f"pretrained={model_name},"
         f"trust_remote_code=True,"
         f"device_map=auto,"
-        f"load_in_4bit=True,"  # Change to load_in_8bit=True if you need higher precision
-        f"max_length=4096"     # Limits KV cache size
+        f"load_in_4bit=True," 
+        f"max_length=4096"     
     )
     
     try:
