@@ -53,7 +53,12 @@ logger = logging.getLogger(__name__)
 # ============================================
 CSV_PATH = r'/jumbo/yaoqingyang/ivprasad/EmbedLLM/data/model_order1.csv'
 OUTPUT_DIR = "./results"
-TASKS = ["mmlu", "truthfulqa_mc1", "piqa", "gsm8k", "gpqa"]
+TASKS = [
+    "arc_challenge",   
+    "hellaswag",       
+    "mmlu",            
+    "truthfulqa_mc1"   
+]
 
 BATCH_SIZE = 8  # I was running out of memory, so change to auto if that's better
 
