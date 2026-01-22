@@ -17,9 +17,11 @@ model_order.csv
 
 # --- Scripts & Logic ---
 similarity.py
+patch.py
 
 # Ignore all run_evals scripts (run_evals1.py, run_evals2.py, etc.)
 run_evals*
+old_run_evals.py
 # EXCEPTION: Do not ignore the main entry point
 !run_evals.py
 
