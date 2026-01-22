@@ -1,20 +1,9 @@
-import sys
 import os
-import typing
-import gc
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,5,7"
 import json
-import logging
-import traceback
-import pandas as pd
 import torch
-
-# ============================================
-# GPU & MEMORY OPTIMIZATION
-# ============================================
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# Helps prevent fragmentation by allowing segments to grow
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-os.environ["HF_DATASETS_TRUST_REMOTE_CODE"] = "1"
+import typing
+import pandas as pd
 
 # ============================================
 # PYTHON 3.12 COMPATIBILITY PATCHES
@@ -36,110 +25,49 @@ def patched_fields(class_or_instance):
     except TypeError: return []
 dataclasses.fields = patched_fields
 
-
 import lm_eval
 from lm_eval.utils import make_table
 
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler('evaluation.log'), logging.StreamHandler(sys.stdout)]
-)
-logger = logging.getLogger(__name__)
-
-# ============================================
-# CONFIGS 
-# ============================================
-CSV_PATH = r'/jumbo/yaoqingyang/ivprasad/EmbedLLM/data/model_order1.csv'
-OUTPUT_DIR = "./results"
-TASKS = [
-    "arc_challenge",   
-    "hellaswag",       
-    "mmlu",            
-    "truthfulqa_mc1"   
-]
-
-BATCH_SIZE = 8  # I was running out of memory, so change to auto if that's better
+# --- CONFIGURATION ---
+INPUT_CSV = 'wuyang_models_ishan.csv' 
+OUTPUT_DIR = './results1'
+TASKS = ["arc_challenge", "hellaswag", "mmlu", "truthfulqa_mc1"]
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+def main():
+    df = pd.read_csv(INPUT_CSV)
+    models = df['model_name'].tolist()
 
-def clear_gpu_memory():
-    """Aggressive VRAM cleanup."""
-    gc.collect()
-    if torch.cuda.is_available():
+    for model_name in models:
+        # Standard filename: swaps '/' for '--' to avoid path errors
+        safe_name = model_name.replace('/', '--')
+        result_path = os.path.join(OUTPUT_DIR, f"{safe_name}.json")
+
+        if os.path.exists(result_path):
+            continue
+
+        print(f"Running: {model_name}")
+
+        try:
+            # DIRECT EVALUATION
+            results = lm_eval.simple_evaluate(
+                model="hf",
+                model_args=f"pretrained={model_name},trust_remote_code=True",
+                tasks=TASKS,
+                # device="cuda:0",
+                batch_size="auto"
+            )
+
+            with open(result_path, 'w') as f:
+                json.dump(results, f, indent=4)
+
+            print(make_table(results))
+
+        except Exception as e:
+            print(f"Error evaluating {model_name}: {e}")
+        
         torch.cuda.empty_cache()
-        torch.cuda.ipc_collect()
-        # Synchronize ensures all kernels are finished before next model load
-        for i in range(torch.cuda.device_count()):
-            torch.cuda.synchronize(device=i)
-    gc.collect()
 
-def make_serializable(obj):
-    if isinstance(obj, dict): return {k: make_serializable(v) for k, v in obj.items()}
-    if isinstance(obj, list): return [make_serializable(v) for v in obj]
-    if hasattr(obj, 'item'): return obj.item()
-    if hasattr(obj, 'tolist'): return obj.tolist()
-    try:
-        json.dumps(obj)
-        return obj
-    except:
-        return str(obj)
-
-# ============================================
-# MAIN EVALUATION LOOP
-# ============================================
-models_df = pd.read_csv(CSV_PATH)
-logger.info(f"Loaded {len(models_df)} models. Visible GPUs: {torch.cuda.device_count()}")
-
-for i, row in models_df.iterrows():
-    model_name = row['model_name']
-    safe_name = model_name.replace("/", "_")
-    output_path = os.path.join(OUTPUT_DIR, f"{safe_name}_results.json")
-    
-    if os.path.exists(output_path):
-        logger.info(f"[{i+1}/{len(models_df)}] Skipping {model_name} (Results found).")
-        continue
-    
-    clear_gpu_memory()
-    logger.info(f"\n[{i+1}/{len(models_df)}] EVALUATING: {model_name}")
-    
-
-    model_args = (
-        f"pretrained={model_name},"
-        f"trust_remote_code=True,"
-        f"device_map=auto,"
-        f"load_in_4bit=True," 
-        f"max_length=4096"     
-    )
-    
-    try:
-        results = lm_eval.simple_evaluate(
-            model="hf",
-            model_args=model_args,
-            tasks=TASKS,
-            device=None,
-            batch_size=BATCH_SIZE,
-        )
-        
-        serializable_results = make_serializable(results)
-        with open(output_path, "w") as f:
-            json.dump(serializable_results, f, indent=2, default=str)
-            
-        logger.info(f"✅ Success: {model_name}")
-        logger.info("\n" + make_table(results))
-        
-        del results, serializable_results
-        
-    except Exception as e:
-        logger.error(f"❌ Error evaluating {model_name}")
-        logger.error(traceback.format_exc())
-        
-        with open(os.path.join(OUTPUT_DIR, f"{safe_name}_ERROR.txt"), "w") as f:
-            f.write(traceback.format_exc())
-    
-    finally:
-        clear_gpu_memory()
-
-logger.info("\n--- All Evaluations Finished ---")
+if __name__ == "__main__":
+    main()
