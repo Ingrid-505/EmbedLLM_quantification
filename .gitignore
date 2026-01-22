@@ -1,2 +1,35 @@
-/data
+# --- Environments & Config ---
 .venv/
+accelerate_cfg/
+
+# --- Data & Results ---
+/data/
+/results/
+truthful_dataset/
+
+# --- Artifacts & Logs ---
+*.log
+
+# --- Project Specific CSVs ---
+train_correctness.csv
+question_order.csv
+model_order.csv
+
+# --- Scripts & Logic ---
+similarity.py
+
+# Ignore all run_evals scripts (run_evals1.py, run_evals2.py, etc.)
+run_evals*
+# EXCEPTION: Do not ignore the main entry point
+!run_evals.py
+
+# --- Standard Python Crap ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
