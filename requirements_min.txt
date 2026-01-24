@@ -1,0 +1,17 @@
+torch
+transformers
+accelerate
+datasets
+lm-eval
+huggingface_hub
+sentencepiece
+protobuf
+safetensors
+tqdm
+numpy
+bitsandbytes
+tiktoken
+flash-attn
+csv
+os
+sys
