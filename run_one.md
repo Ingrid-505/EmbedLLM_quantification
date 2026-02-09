@@ -11,6 +11,6 @@
 
 ## Sample
 
-`CUDA_VISIBLE_DEVICES=0 python run_one.py --model_name <MODEL_NAME> --batch_size 2`
+`CUDA_VISIBLE_DEVICES=0 python run_one_v2.py --model_name meta-llama/Llama-2-7b-hf --batch_size 2`
 or run with run_evals.sh after changing `CSV_PATH` and `GPU_GROUPS`
 `bash run_evals.sh`
